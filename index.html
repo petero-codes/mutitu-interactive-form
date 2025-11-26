@@ -6,49 +6,70 @@
   <title>Interactive Registration Form</title>
   <style>
     :root {
-      --bg: #0e111a;
-      --card: #171c28;
-      --surface: #1f2430;
-      --text: #e8eaf6;
-      --muted: #aab4d4;
-      --accent: #4aa2f2;
-      --danger: #e74c3c;
-      --success: #2ecc71;
-      --warning: #f1c40f;
-      --border: #2a3243;
+      /* Color Combo 01 from design */
+      --light-pink: #E0BCB9;
+      --orange: #ED9E59;
+      --reddish-brown: #A34054;
+      --dark-maroon: #662249;
+      --dark-purple: #44174E;
+      --dark-navy: #1B1913;
+      
+      /* Refined color system for better contrast and readability */
+      --bg: var(--dark-navy);
+      --card: rgba(102, 34, 73, 0.95);
+      --surface: rgba(163, 64, 84, 0.15);
+      --text: #F5E6E4;
+      --muted: #D4B8B5;
+      --accent: var(--orange);
+      --accent-hover: #F5B875;
+      --danger: #E87A8A;
+      --success: #8FC97A;
+      --warning: var(--orange);
+      --border: rgba(68, 23, 78, 0.6);
+      --border-focus: var(--orange);
+      --input-bg: rgba(102, 34, 73, 0.4);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      background: linear-gradient(135deg, #0a0f1a 0%, #111422 60%, #0a0f1a 100%);
+      background: linear-gradient(135deg, var(--dark-navy) 0%, var(--dark-purple) 50%, var(--dark-maroon) 100%);
       color: var(--text);
       min-height: 100vh;
-      padding: 40px;
+      padding: 20px;
     }
     .card {
       max-width: 640px;
       margin: 0 auto;
       background: var(--card);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(68, 23, 78, 0.4);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.25);
+      box-shadow: 0 20px 60px rgba(27, 25, 19, 0.6), 0 0 0 1px rgba(68, 23, 78, 0.2);
+      width: 100%;
     }
     h1 { margin: 0 0 8px; font-size: 1.25rem; }
     p.subtitle { margin: 0 0 16px; color: var(--muted); }
     form { display: grid; gap: 14px; }
     .field { display: grid; gap: 6px; }
-    label { font-size: 0.9rem; color: #d9e1ff; }
+    label { font-size: 0.9rem; color: var(--light-pink); }
     input {
       padding: 12px 12px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      background: #111828;
+      background: var(--input-bg);
       color: var(--text);
       font-size: 1rem;
+      transition: all 0.2s ease;
     }
-    input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(74,162,242,.25); }
+    input:focus { 
+      outline: none; 
+      border-color: var(--border-focus); 
+      box-shadow: 0 0 0 3px rgba(237, 158, 89, 0.25);
+      background: rgba(102, 34, 73, 0.5);
+    }
     .hint { font-size: 0.85rem; color: var(--muted); }
     .error {
       color: var(--danger);
@@ -59,10 +80,14 @@
       font-size: 0.95rem;
       margin-top: 4px;
     }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .row { 
+      display: grid; 
+      grid-template-columns: 1fr; 
+      gap: 14px; 
+    }
     .password-meter {
       height: 6px;
-      background: #283341;
+      background: rgba(68, 23, 78, 0.3);
       border-radius: 6px;
       overflow: hidden;
       margin-top: 6px;
@@ -71,7 +96,7 @@
       display: block;
       height: 100%;
       width: 0;
-      background: linear-gradient(90deg, #e74c3c, #f1c40f, #2ecc71);
+      background: linear-gradient(90deg, var(--reddish-brown), var(--orange), var(--light-pink));
       transition: width .25s ease;
     }
     .btn {
@@ -82,10 +107,76 @@
       color: white;
       font-size: 1rem;
       cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(237, 158, 89, 0.5);
+    }
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
     }
     .btn:disabled {
-      background: #6b8bd6;
+      background: rgba(237, 158, 89, 0.5);
       cursor: not-allowed;
+    }
+    .field-submit {
+      text-align: right;
+    }
+    .field-feedback {
+      min-height: 1.5em;
+    }
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-wrapper input {
+      width: 100%;
+      padding-right: 45px;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      transition: all 0.2s ease;
+      z-index: 1;
+      border-radius: 4px;
+    }
+    .password-toggle:hover {
+      color: var(--accent);
+      background: rgba(237, 158, 89, 0.1);
+    }
+    .password-toggle:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+    .password-toggle svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .password-toggle svg.eye-slash {
+      display: none;
+    }
+    .password-toggle[aria-pressed="true"] svg.eye {
+      display: none;
+    }
+    .password-toggle[aria-pressed="true"] svg.eye-slash {
+      display: block;
     }
     .sr-only {
       position: absolute;
@@ -93,6 +184,107 @@
       padding: 0; margin: -1px;
       overflow: hidden; clip: rect(0,0,0,0);
       border: 0;
+    }
+
+    /* Responsive Design */
+    /* Tablet and up - 2 column layout */
+    @media (min-width: 481px) {
+      .row {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      body {
+        padding: 30px;
+      }
+      .card {
+        padding: 24px;
+      }
+    }
+
+    /* Desktop - larger padding and spacing */
+    @media (min-width: 769px) {
+      body {
+        padding: 40px;
+      }
+      .card {
+        padding: 32px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Mobile - optimize for small screens */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      .card {
+        padding: 16px;
+        border-radius: 8px;
+      }
+      h1 {
+        font-size: 1.1rem;
+      }
+      input {
+        padding: 14px 12px;
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+      .password-wrapper input {
+        padding-right: 45px;
+      }
+      .password-toggle {
+        right: 10px;
+        padding: 10px;
+      }
+      .password-toggle svg {
+        width: 22px;
+        height: 22px;
+      }
+      .btn {
+        width: 100%;
+        padding: 14px;
+        font-size: 1rem;
+      }
+      .field-submit {
+        text-align: center;
+      }
+      label {
+        font-size: 0.875rem;
+      }
+      .hint, .error {
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Very small screens */
+    @media (max-width: 320px) {
+      body {
+        padding: 8px;
+      }
+      .card {
+        padding: 12px;
+      }
+      form {
+        gap: 12px;
+      }
+    }
+
+    /* Landscape orientation on mobile */
+    @media (max-width: 768px) and (orientation: landscape) {
+      body {
+        padding: 16px;
+      }
+      .card {
+        padding: 20px;
+      }
+    }
+
+    /* Large screens */
+    @media (min-width: 1200px) {
+      .card {
+        max-width: 720px;
+      }
     }
   </style>
 </head>
@@ -126,9 +318,21 @@
 
       <div class="field">
         <label for="password">Password</label>
-        <input id="password" name="password" type="password" autocomplete="new-password" required placeholder="At least 8 chars" aria-invalid="false" />
+        <div class="password-wrapper">
+          <input id="password" name="password" type="password" autocomplete="new-password" required placeholder="At least 8 chars" aria-invalid="false" />
+          <button type="button" class="password-toggle" aria-label="Show password" aria-pressed="false" id="togglePassword">
+            <svg class="eye" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg class="eye-slash" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
         <div class="hint">Use a mix of letters, numbers, and symbols.</div>
-        <div class="password-meter" aria-label="Password strength" aria-valuemin="0" aria-valuemax="100" role="meter" id="pwdMeter">
+        <div class="password-meter" aria-label="Password strength" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" role="meter" id="pwdMeter">
           <span></span>
         </div>
         <div class="error" id="err-password" role="alert" aria-live="polite"></div>
@@ -136,15 +340,27 @@
 
       <div class="field">
         <label for="confirm">Confirm Password</label>
-        <input id="confirm" name="confirm" type="password" autocomplete="new-password" required placeholder="Re-enter password" aria-invalid="false" />
+        <div class="password-wrapper">
+          <input id="confirm" name="confirm" type="password" autocomplete="new-password" required placeholder="Re-enter password" aria-invalid="false" />
+          <button type="button" class="password-toggle" aria-label="Show password" aria-pressed="false" id="toggleConfirm">
+            <svg class="eye" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg class="eye-slash" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
         <div class="error" id="err-confirm" role="alert" aria-live="polite"></div>
       </div>
 
-      <div class="field" aria-live="polite" id="formFeedback" style="min-height: 1.5em;">
+      <div class="field field-feedback" aria-live="polite" id="formFeedback">
         <!-- Dynamic summary messages could appear here if desired -->
       </div>
 
-      <div class="field" style="text-align: right;">
+      <div class="field field-submit">
         <button class="btn" type="submit" id="submitBtn" disabled>Register</button>
       </div>
       <div id="successMessage" class="success" role="status" aria-live="polite" hidden>
@@ -321,6 +537,22 @@
         successMessage.hidden = true;
       }
     });
+
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    const toggleConfirm = document.getElementById('toggleConfirm');
+
+    function setupPasswordToggle(toggleBtn, inputField) {
+      toggleBtn.addEventListener('click', function() {
+        const isPassword = inputField.type === 'password';
+        inputField.type = isPassword ? 'text' : 'password';
+        toggleBtn.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
+        toggleBtn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+      });
+    }
+
+    setupPasswordToggle(togglePassword, fields.password);
+    setupPasswordToggle(toggleConfirm, fields.confirm);
 
     // Initialize
     submitBtn.disabled = true;
