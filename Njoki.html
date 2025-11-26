@@ -176,6 +176,7 @@
     };
 
     const pwdMeter = document.getElementById('pwdMeter').firstElementChild;
+    const pwdMeterContainer = document.getElementById('pwdMeter');
 
     // Validation rules
     function isNonEmpty(v) { return v && v.trim().length > 0; }
@@ -235,7 +236,7 @@
     function updatePwdMeter(pw) {
       const s = passwordStrength(pw);
       pwdMeter.style.width = s + '%';
-      pwdMeter.setAttribute('aria-valuenow', s);
+      pwdMeterContainer.setAttribute('aria-valuenow', s);
       // Color hint by gradient length
       // Inline feedback messages
       if (s < 40) {
@@ -314,6 +315,7 @@
         // Reset meter and errors
         updatePwdMeter('');
         Object.values(errors).forEach(err => err.textContent = '');
+        submitBtn.disabled = true;
         successMessage.textContent = 'Registration successful! A confirmation email has been sent.';
       } else {
         successMessage.hidden = true;
