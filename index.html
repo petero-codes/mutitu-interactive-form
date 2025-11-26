@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Registration Form</title>
+  <style>
+    :root {
+      --bg: #0e111a;
+      --card: #171c28;
+      --surface: #1f2430;
+      --text: #e8eaf6;
+      --muted: #aab4d4;
+      --accent: #4aa2f2;
+      --danger: #e74c3c;
+      --success: #2ecc71;
+      --warning: #f1c40f;
+      --border: #2a3243;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      background: linear-gradient(135deg, #0a0f1a 0%, #111422 60%, #0a0f1a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px;
+    }
+    .card {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,.25);
+    }
+    h1 { margin: 0 0 8px; font-size: 1.25rem; }
+    p.subtitle { margin: 0 0 16px; color: var(--muted); }
+    form { display: grid; gap: 14px; }
+    .field { display: grid; gap: 6px; }
+    label { font-size: 0.9rem; color: #d9e1ff; }
+    input {
+      padding: 12px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #111828;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(74,162,242,.25); }
+    .hint { font-size: 0.85rem; color: var(--muted); }
+    .error {
+      color: var(--danger);
+      font-size: 0.85rem;
+    }
+    .success {
+      color: var(--success);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .password-meter {
+      height: 6px;
+      background: #283341;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .password-meter > span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #e74c3c, #f1c40f, #2ecc71);
+      transition: width .25s ease;
+    }
+    .btn {
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .btn:disabled {
+      background: #6b8bd6;
+      cursor: not-allowed;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <main class="card" aria-label="Registration Form Card">
+    <h1> Interactive Registration Form</h1>
+    
+    <form id="regForm" novalidate>
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required placeholder="Jane Doe" aria-invalid="false" />
+        <div class="hint">Enter your full name.</div>
+        <div class="error" id="err-name" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" aria-invalid="false" />
+          <div class="hint">We'll use this to contact you.</div>
+          <div class="error" id="err-email" role="alert" aria-live="polite"></div>
+        </div>
+
+        <div class="field">
+          <label for="username">Username (optional)</label>
+          <input id="username" name="username" type="text" autocomplete="username" placeholder="nickname" aria-invalid="false" />
+          <div class="hint">This field is optional.</div>
+          <div class="error" id="err-username" role="alert" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" required placeholder="At least 8 chars" aria-invalid="false" />
+        <div class="hint">Use a mix of letters, numbers, and symbols.</div>
+        <div class="password-meter" aria-label="Password strength" aria-valuemin="0" aria-valuemax="100" role="meter" id="pwdMeter">
+          <span></span>
+        </div>
+        <div class="error" id="err-password" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="field">
+        <label for="confirm">Confirm Password</label>
+        <input id="confirm" name="confirm" type="password" autocomplete="new-password" required placeholder="Re-enter password" aria-invalid="false" />
+        <div class="error" id="err-confirm" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="field" aria-live="polite" id="formFeedback" style="min-height: 1.5em;">
+        <!-- Dynamic summary messages could appear here if desired -->
+      </div>
+
+      <div class="field" style="text-align: right;">
+        <button class="btn" type="submit" id="submitBtn" disabled>Register</button>
+      </div>
+      <div id="successMessage" class="success" role="status" aria-live="polite" hidden>
+        Registration successful! A confirmation email has been sent.
+      </div>
+    </form>
+  </main>
+
+  <script>
+    // Basic helpers
+    const form = document.getElementById('regForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const successMessage = document.getElementById('successMessage');
+
+    const fields = {
+      name: document.getElementById('name'),
+      email: document.getElementById('email'),
+      username: document.getElementById('username'),
+      password: document.getElementById('password'),
+      confirm: document.getElementById('confirm')
+    };
+
+    const errors = {
+      name: document.getElementById('err-name'),
+      email: document.getElementById('err-email'),
+      username: document.getElementById('err-username'),
+      password: document.getElementById('err-password'),
+      confirm: document.getElementById('err-confirm')
+    };
+
+    const pwdMeter = document.getElementById('pwdMeter').firstElementChild;
+    const pwdMeterContainer = document.getElementById('pwdMeter');
+
+    // Validation rules
+    function isNonEmpty(v) { return v && v.trim().length > 0; }
+
+    function validateName() {
+      const v = fields.name.value;
+      if (!isNonEmpty(v)) {
+        errors.name.textContent = 'Name is required.';
+        return false;
+      }
+      errors.name.textContent = '';
+      return true;
+    }
+
+    function isEmailValid(email) {
+      // Simple RFC-5322-ish check; can be swapped for a more robust one
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(String(email).toLowerCase());
+    }
+
+    function validateEmail() {
+      const v = fields.email.value;
+      if (!isNonEmpty(v)) {
+        errors.email.textContent = 'Email is required.';
+        return false;
+      }
+      if (!isEmailValid(v)) {
+        errors.email.textContent = 'Please enter a valid email address.';
+        return false;
+      }
+      // Could add disposable email check here
+      errors.email.textContent = '';
+      return true;
+    }
+
+    function validateUsername() {
+      const v = fields.username.value;
+      // Optional field; basic length check if provided
+      if (v && v.length > 0 && v.length < 3) {
+        errors.username.textContent = 'Username must be at least 3 characters or leave empty.';
+        return false;
+      }
+      errors.username.textContent = '';
+      return true;
+    }
+
+    function passwordStrength(pw) {
+      let score = 0;
+      if (pw.length >= 8) score += 20;
+      if (/[A-Z]/.test(pw)) score += 20;
+      if (/[a-z]/.test(pw)) score += 20;
+      if (/[0-9]/.test(pw)) score += 20;
+      if (/[^A-Za-z0-9]/.test(pw)) score += 20;
+      return Math.min(100, score);
+    }
+
+    function updatePwdMeter(pw) {
+      const s = passwordStrength(pw);
+      pwdMeter.style.width = s + '%';
+      pwdMeterContainer.setAttribute('aria-valuenow', s);
+      // Color hint by gradient length
+      // Inline feedback messages
+      if (s < 40) {
+        errors.password.textContent = 'Password is weak. Try longer and add variety (uppercase, numbers, symbols).';
+      } else if (s < 70) {
+        errors.password.textContent = 'Password is moderate. Consider adding more variety.';
+      } else {
+        errors.password.textContent = '';
+      }
+    }
+
+    function validatePassword() {
+      const v = fields.password.value;
+      if (!isNonEmpty(v)) {
+        errors.password.textContent = 'Password is required.';
+        return false;
+      }
+      if (v.length < 8) {
+        errors.password.textContent = 'Password must be at least 8 characters.';
+        return false;
+      }
+      const s = passwordStrength(v);
+      if (s < 60) {
+        errors.password.textContent = 'Password is not strong enough.';
+        return false;
+      }
+      errors.password.textContent = '';
+      updatePwdMeter(v);
+      return true;
+    }
+
+    function validateConfirm() {
+      const v = fields.confirm.value;
+      if (!isNonEmpty(v)) {
+        errors.confirm.textContent = 'Please confirm your password.';
+        return false;
+      }
+      if (v !== fields.password.value) {
+        errors.confirm.textContent = 'Passwords do not match.';
+        return false;
+      }
+      errors.confirm.textContent = '';
+      return true;
+    }
+
+    function allValid() {
+      return validateName() && validateEmail() && validateUsername()
+        && validatePassword() && validateConfirm();
+    }
+
+    // Event handlers
+    function onInputOrBlur() {
+      // Validate on each change (live validation)
+      validateName();
+      validateEmail();
+      validateUsername();
+      validatePassword();
+      validateConfirm();
+      // Enable submit if all valid
+      submitBtn.disabled = !allValid();
+    }
+
+    // Attach events
+    Object.values(fields).forEach(el => {
+      el.addEventListener('input', onInputOrBlur);
+      el.addEventListener('blur', onInputOrBlur);
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      // Final full validation
+      if (allValid()) {
+        // Simulate submission
+        successMessage.hidden = false;
+        form.reset();
+        // Reset meter and errors
+        updatePwdMeter('');
+        Object.values(errors).forEach(err => err.textContent = '');
+        submitBtn.disabled = true;
+        successMessage.textContent = 'Registration successful! A confirmation email has been sent.';
+      } else {
+        successMessage.hidden = true;
+      }
+    });
+
+    // Initialize
+    submitBtn.disabled = true;
+    updatePwdMeter('');
+  </script>
+</body>
+</html>
+
