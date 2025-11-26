@@ -41,14 +41,21 @@
     .card {
       max-width: 640px;
       margin: 0 auto;
-      background: var(--card);
-      border: 1px solid rgba(68, 23, 78, 0.4);
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
+      background: rgba(102, 34, 73, 0.25);
+      border: 1px solid rgba(224, 188, 185, 0.2);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 20px 60px rgba(27, 25, 19, 0.6), 0 0 0 1px rgba(68, 23, 78, 0.2);
+      box-shadow: 0 8px 32px rgba(27, 25, 19, 0.4), 
+                  inset 0 1px 0 rgba(224, 188, 185, 0.1);
       width: 100%;
+      transition: all 0.4s ease;
+    }
+    .card.hidden {
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
     }
     h1 { margin: 0 0 8px; font-size: 1.25rem; }
     p.subtitle { margin: 0 0 16px; color: var(--muted); }
@@ -59,7 +66,9 @@
       padding: 12px 12px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      background: var(--input-bg);
+      background: rgba(102, 34, 73, 0.2);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
       color: var(--text);
       font-size: 1rem;
       transition: all 0.2s ease;
@@ -126,6 +135,105 @@
     }
     .field-feedback {
       min-height: 1.5em;
+    }
+    /* Success Page Styles */
+    .success-page {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+    .success-page.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .success-card {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(102, 34, 73, 0.25);
+      border: 1px solid rgba(224, 188, 185, 0.2);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(27, 25, 19, 0.4),
+                  inset 0 1px 0 rgba(224, 188, 185, 0.1);
+      text-align: center;
+      transform: scale(0.9);
+      transition: transform 0.5s ease;
+    }
+    .success-page.show .success-card {
+      transform: scale(1);
+    }
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      color: var(--success);
+      animation: checkmark 0.6s ease-in-out;
+    }
+    .success-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+    @keyframes checkmark {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.2);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .success-card h2 {
+      color: var(--text);
+      font-size: 1.75rem;
+      margin: 0 0 16px;
+      font-weight: 600;
+    }
+    .success-message {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin: 0 0 24px;
+    }
+    .success-details {
+      background: rgba(102, 34, 73, 0.2);
+      border: 1px solid rgba(224, 188, 185, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+      margin: 24px 0;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+    .success-details p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+    .btn-secondary {
+      background: rgba(237, 158, 89, 0.2);
+      border: 1px solid rgba(237, 158, 89, 0.4);
+      color: var(--accent);
+      margin-top: 8px;
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(237, 158, 89, 0.3);
+      border-color: rgba(237, 158, 89, 0.6);
     }
     .password-wrapper {
       position: relative;
@@ -255,6 +363,21 @@
       .hint, .error {
         font-size: 0.8rem;
       }
+      .success-page {
+        padding: 16px;
+      }
+      .success-card {
+        padding: 24px;
+        border-radius: 16px;
+      }
+      .success-card h2 {
+        font-size: 1.5rem;
+      }
+      .success-icon {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 20px;
+      }
     }
 
     /* Very small screens */
@@ -368,6 +491,24 @@
       </div>
     </form>
   </main>
+
+  <!-- Success Page with Glassmorphism -->
+  <div id="successPage" class="success-page hidden">
+    <div class="success-card">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>Registration Successful!</h2>
+      <p class="success-message">Your account has been created successfully. A confirmation email has been sent to your email address.</p>
+      <div class="success-details">
+        <p>Please check your inbox and follow the instructions to verify your account.</p>
+      </div>
+      <button class="btn btn-secondary" id="backToForm">Back to Form</button>
+    </div>
+  </div>
 
   <script>
     // Basic helpers
@@ -521,21 +662,41 @@
       el.addEventListener('blur', onInputOrBlur);
     });
 
+    // Success page elements
+    const successPage = document.getElementById('successPage');
+    const backToFormBtn = document.getElementById('backToForm');
+    const card = document.querySelector('.card');
+
     form.addEventListener('submit', function(e) {
       e.preventDefault();
       // Final full validation
       if (allValid()) {
-        // Simulate submission
-        successMessage.hidden = false;
+        // Hide form with animation
+        card.classList.add('hidden');
+        
+        // Show success page after a short delay
+        setTimeout(() => {
+          successPage.classList.remove('hidden');
+          successPage.classList.add('show');
+        }, 300);
+        
+        // Reset form (but keep it hidden)
         form.reset();
-        // Reset meter and errors
         updatePwdMeter('');
         Object.values(errors).forEach(err => err.textContent = '');
         submitBtn.disabled = true;
-        successMessage.textContent = 'Registration successful! A confirmation email has been sent.';
       } else {
         successMessage.hidden = true;
       }
+    });
+
+    // Back to form functionality
+    backToFormBtn.addEventListener('click', function() {
+      successPage.classList.remove('show');
+      setTimeout(() => {
+        successPage.classList.add('hidden');
+        card.classList.remove('hidden');
+      }, 300);
     });
 
     // Password toggle functionality
